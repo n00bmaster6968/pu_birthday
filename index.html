@@ -335,21 +335,21 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         // --- Configuration ---
-        const BIRTHDAY_MONTH = 10; // Tháng 11 (0-indexed)
-        const BIRTHDAY_DAY = 1; 
-        const TYPING_SPEED = 20; 
-        const MUSIC_START_TIME = 105; // 1 phút 40 giây = 100 giây
+        const BIRTHDAY_MONTH = 10; // nov 11 (0-indexed)
+        const BIRTHDAY_DAY = 2; 
+        const TYPING_SPEED = 16; 
+        const MUSIC_START_TIME = 105; 
         
         // --- Element references ---
         const messageContainer = document.getElementById('messageContent');
         const hiddenMessageTemplate = document.getElementById('hiddenMessageTemplate');
         const countdownElement = document.getElementById('countdown');
-        const birthdayMusic = document.getElementById('birthdayMusic'); // THẺ AUDIO
+        const birthdayMusic = document.getElementById('birthdayMusic'); 
         
         let isBirthday = false;
         let isMessageExpanded = false; 
 
-        // --- Confetti Logic (Không thay đổi) ---
+        // --- Confetti Logic---
         const canvas = document.getElementById('confettiCanvas');
         const ctx = canvas.getContext('2d');
         let confettiPieces = [];
@@ -423,7 +423,6 @@
 
         animateConfetti();
         
-        // --- Logic gán màu ngẫu nhiên cho dây cờ (Không thay đổi) ---
         const BUNTING_COLORS = ['#EF9A9A', '#B39DDB', '#80CBC4', '#FFECB3', '#9FA8DA', '#F48FB1', '#A5D6A7', '#FFD180', '#E6EE9C', '#CFD8DC'];
 
         function assignRandomBuntingColors() {
@@ -436,7 +435,6 @@
 
         assignRandomBuntingColors();
 
-        // --- HÀM HIỆU ỨNG GÕ CHỮ TỪNG DÒNG (Không thay đổi) ---
         function typeMessage(elements, elementIndex = 0, charIndex = 0) {
             if (elementIndex >= elements.length) {
                 elements[elements.length - 1].classList.add('typed-done'); 
@@ -471,16 +469,13 @@
             typeMessage(children);
         }
 
-        // --- Logic Phát nhạc từ 1:40 (100s) ---
         function playMusicFromStart() {
             if (birthdayMusic && birthdayMusic.src) {
-                birthdayMusic.currentTime = MUSIC_START_TIME; // Đặt thời gian bắt đầu
-                birthdayMusic.volume = 0.6; // Đặt âm lượng vừa phải (tùy chọn)
+                birthdayMusic.currentTime = MUSIC_START_TIME;
+                birthdayMusic.volume = 0.6; 
                 
-                // Lệnh play() phải nằm trong sự kiện tương tác của người dùng để hoạt động trên các trình duyệt hiện đại
                 birthdayMusic.play().catch(error => {
                     console.log("Auto-play was prevented. User needs to interact again or check music URL.", error);
-                    // Nếu lỗi (do trình duyệt chặn autoplay), có thể thử chơi lại
                 });
             } else {
                  console.log("No music source found or audio element not ready. Check the 'src' attribute.");
@@ -546,11 +541,7 @@
             if (isBirthday && !isMessageExpanded) {
                 isMessageExpanded = true; 
                 messageContainer.innerHTML = '';
-                
-                // 1. Phát nhạc từ 1:40
                 playMusicFromStart();
-                
-                // 2. Hiện tin nhắn gõ chữ
                 revealMessageWithTyping();
             }
         });
