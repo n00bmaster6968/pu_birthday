@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Cutesy - My Pu Pu!</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Quicksand', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #E0F7FA, #B3E5FC);
+            color: #4A4A4A;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Canvas for Confetti (Full Screen, Background) */
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .container {
+            background-color: #FFFFFF;
+            margin: 30px 20px;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 100;
+        }
+
+        /* Header */
+        header {
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 2px dashed #BBDEFB;
+        }
+
+        /* Tiêu đề chính */
+        .main-title {
+            font-family: 'Pacifico', cursive;
+            font-size: 4em;
+            color: #64B5F6;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.4em;
+            color: #90CAF9;
+            font-weight: 700;
+        }
+        
+        /* Birthday Message Section - Nền Giấy Note */
+        .birthday-message {
+            margin-bottom: 35px;
+            padding: 30px;
+            background-color: #FFFDE7;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><pattern id="stripes" width="100%" height="30" patternUnits="userSpaceOnUse"><line x1="0" y1="29" x2="100%" y2="29" stroke="%23ffe4e1" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="%23fffaf0"/><rect width="100%" height="100%" fill="url(%23stripes)"/></svg>');
+            background-size: 100% 100%;
+            border: 1px solid #FFCCBC;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        /* CSS cho hiệu ứng gõ chữ */
+        .message-text, .message-text-greeting {
+            font-size: 1.1em;
+            color: #5C6BC0;
+            margin-bottom: 15px;
+            line-height: 1.8;
+            font-weight: 500;
+            text-align: left;
+            overflow: hidden;
+            white-space: pre-wrap;
+        }
+        
+        .message-text-greeting {
+            font-weight: 700;
+            text-align: center; 
+        }
+
+        /* Cursor blinking effect */
+        .message-text:after {
+            content: '|';
+            display: inline-block;
+            animation: blink 0.7s infinite;
+            margin-left: 2px;
+            font-weight: 300;
+        }
+        .typed-done:after {
+             content: '';
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .birthday-message-alert {
+            font-size: 1.6em;
+            font-weight: 700;
+            color: #E91E63;
+            background-color: #FFEBEE;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #F48FB1;
+            animation: shake 0.8s infinite alternate;
+            cursor: pointer; 
+        }
+        
+        .not-birthday-message {
+            font-size: 1.2em;
+            font-weight: 500;
+            color: #4863A0;
+            padding: 10px;
+        }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px) rotate(-1deg); }
+            75% { transform: translateX(5px) rotate(1deg); }
+            100% { transform: translateX(0); }
+        }
+
+        .signature {
+            font-style: normal;
+            text-align: right;
+            margin-top: 25px;
+            color: #42A5F5;
+            font-weight: 700;
+        }
+
+        /* Countdown Section */
+        .countdown-section {
+            margin-bottom: 15px; 
+            padding: 8px 12px; 
+            background-color: #E1F5FE;
+            border-radius: 8px; 
+            border: 2px dotted #81D4FA;
+        }
+
+        .countdown-title {
+            font-size: 1.5em; 
+            color: #2196F3;
+            margin-bottom: 5px; 
+            margin-top: 5px; 
+        }
+
+        .countdown-timer {
+            font-size: 1.4em; 
+            font-weight: bold;
+            color: #1976D2;
+            letter-spacing: 1.5px; 
+            background-color: #BBDEFB;
+            padding: 6px 15px; 
+            border-radius: 6px; 
+            display: inline-block;
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.03); }
+        }
+        
+        /* Dây cờ (2 dây) - ĐÃ CẬP NHẬT VỊ TRÍ TOP */
+        .garland-wrap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%; 
+            z-index: 150; 
+            pointer-events: none;
+            overflow: hidden; 
+        }
+        
+        .bunting-garland {
+            position: absolute;
+            height: 100%; 
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            transition: all 0.5s ease-out; 
+        }
+        
+        .bunting-garland::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #8D8D8D; 
+            transform-origin: 0 0;
+            z-index: 1;
+            opacity: 0;
+        }
+        
+
+        /* Định vị 2 lớp cờ (ĐÃ CẬP NHẬT) */
+        .garland-wrap .layer-1 { top: 10px; left: -10%; width: 120%; } /* Dịch chuyển lên 20px (từ 30px xuống 10px) */
+        .garland-wrap .layer-1::before { transform: rotateZ(5deg); }
+        
+        .garland-wrap .layer-2 { top: 70px; left: -5%; width: 110%; } /* Dịch chuyển lên 50px (từ 120px xuống 70px) */
+        .garland-wrap .layer-2::before { transform: rotateZ(-3deg); animation-delay: -1.5s; }
+        
+
+        .bunting {
+            position: relative;
+            width: 0;
+            height: 0;
+            margin: 0 5px;
+            animation: sway 5s infinite ease-in-out alternate; 
+            filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.1));
+            top: 0px; 
+            z-index: 5;
+        }
+
+        .bunting::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -15px; 
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 30px solid var(--bunting-color, #FFCDD2); 
+            transform: rotateZ(3deg);
+        }
+
+        .bunting:nth-child(even) { animation-duration: 4.5s; }
+        .bunting:nth-child(odd) { animation-duration: 5.5s; }
+        .bunting:nth-child(4n) { animation-delay: -2s; }
+
+        @keyframes sway {
+            0% { transform: translateY(0) translateX(0) rotateZ(0deg); }
+            100% { transform: translateY(10px) translateX(10px) rotateZ(5deg); }
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px dashed #BBDEFB;
+            color: #9E9E9E;
+            font-size: 0.9em;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px 15px;
+                padding: 30px;
+            }
+            .main-title {
+                font-size: 3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <audio id="birthdayMusic" loop preload="auto" style="display: none;" src="for_you.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="garland-wrap">
+        <div class="bunting-garland layer-1">
+            <div class="bunting"></div><div class="bunting"></div><div class="bunting"></div><div class="bunting"></div><div class="bunting"></div><div class="bunting"></div>
+        </div>
+        <div class="bunting-garland layer-2">
+            <div class="bunting"></div><div class="bunting"></div><div class="bunting"></div><div class="bunting"></div><div class="bunting"></div><div class="bunting"></div>
+        </div>
+    </div>
+    
+    <canvas id="confettiCanvas"></canvas>
+    
+    <div class="container">
+        <header>
+            <h1 class="main-title">Happy Birthday, 
+            <br>   my dear!</br></h1>
+            <p class="subtitle">Always be yourself, You're Always Beloved! ✨</p>
+        </header>
+
+        <section class="birthday-message">
+            <div id="messageContent">
+                </div>
+            
+            <div id="hiddenMessageTemplate" style="display:none;">
+                <p class="message-text-greeting">Gửi Pu của tao,</p>
+                <p class="message-text">Happy birthday, my dearest soulmate! </p>
+                <p class="message-text">   
+                Tuổi mới mang theo nhiều niềm vui mới và hãy nhớ là đang có hàng tá những điều tươi đẹp chờ mày khám phá sắp tới. Công việc thì thuận buồm xuôi gió, xuôi chèo mát mái! Dù lỡ gặp khó khăn gì đi chẳng nữa thì cũng dễ dàng vượt qua.</p>
+                <p class="message-text">Qua “tuổi 17” rồi đó, nhớ giữ gìn sức khỏe cho cẩn thận để còn có sức mà "bẻ gãy" hết mấy cái sừng trâu đang cản đường.</p>
+                <p class="message-text">Bước sang tuổi mới, sắc đẹp của mày phải "vượt mặt" mấy bé Pu của những năm trước, phải luôn là phiên bản đẹp nhứt của mình. Có lỡ buồn gì đó thì cũng phải đẹp tại đẹp nó mới hết buồn lẹ được.</p>
+                <p class="message-text">Sau sức khỏe, sắc đẹp, và công việc, mong mày gặp được một "người ấy" thật hợp tính, một người trân trọng mày, một người chịu đựng được mày, một người chấp nhận mày là mày và quan trọng là cùng mày trở nên tốt hơn mỗi ngày.</p>
+                <p class="message-text">Dù có sóng gió đến đâu, tao vẫn luôn muốn mày giữ vững sự tự tin vào bản thân, hãy luôn là Uyên mà tao biết.</p>
+                <p class="message-text">Thương mày nhứt!</p>
+                <p class="message-text signature">Deine Frau</p>
+                <p class="message-text signature"></p>You_know _who</p>
+            </div>
+        </section>
+
+        <section class="countdown-section">
+            <h2 class="countdown-title">Count down (07/11):</h2>
+            <div id="countdown" class="countdown-timer"></div>
+        </section>
+
+        <footer>
+            <p>© Only for my husband, DNPU! ❤️</p>
+        </footer>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Configuration ---
+        const BIRTHDAY_MONTH = 10; // Tháng 11 (0-indexed)
+        const BIRTHDAY_DAY = 1; 
+        const TYPING_SPEED = 20; 
+        const MUSIC_START_TIME = 105; // 1 phút 40 giây = 100 giây
+        
+        // --- Element references ---
+        const messageContainer = document.getElementById('messageContent');
+        const hiddenMessageTemplate = document.getElementById('hiddenMessageTemplate');
+        const countdownElement = document.getElementById('countdown');
+        const birthdayMusic = document.getElementById('birthdayMusic'); // THẺ AUDIO
+        
+        let isBirthday = false;
+        let isMessageExpanded = false; 
+
+        // --- Confetti Logic (Không thay đổi) ---
+        const canvas = document.getElementById('confettiCanvas');
+        const ctx = canvas.getContext('2d');
+        let confettiPieces = [];
+        const MAX_CONFETTI = 50; 
+        const CONFETTI_COLORS = ['#ADD8E6', '#B0E0E6', '#87CEEB', '#6A5ACD', '#C6E2FF', '#D8BFD8', '#FFCCBC', '#F48FB1'];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        class Confetti {
+            constructor() {
+                this.x = random(0, canvas.width);
+                this.y = random(-20, -10);
+                this.size = random(5, 12);
+                this.color = CONFETTI_COLORS[Math.floor(random(0, CONFETTI_COLORS.length))];
+                this.tilt = random(0, 10);
+                this.tiltAngle = 0;
+                this.tiltAngleSpeed = random(0.05, 0.15);
+                this.speed = random(2, 5);
+                this.wobble = random(0, 5);
+            }
+
+            update(index) {
+                this.x += Math.sin(this.wobble) * 0.5;
+                this.y += this.speed;
+                this.tiltAngle += this.tiltAngleSpeed;
+                this.wobble += 0.1;
+                this.tilt = Math.sin(this.tiltAngle) * 5;
+
+                if (this.y > canvas.height) {
+                    confettiPieces.splice(index, 1);
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x + this.tilt / 2, this.y);
+                ctx.rotate(this.tiltAngle);
+                ctx.fillStyle = this.color;
+                ctx.fillRect(0, 0, this.size, this.size / 2); 
+                ctx.restore();
+            }
+        }
+
+        function addConfetti() {
+            if (confettiPieces.length < MAX_CONFETTI) {
+                confettiPieces.push(new Confetti());
+            }
+        }
+        
+        setInterval(addConfetti, 1500 / (MAX_CONFETTI / 5));
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); 
+            
+            for (let i = confettiPieces.length - 1; i >= 0; i--) {
+                confettiPieces[i].update(i);
+                confettiPieces[i].draw();
+            }
+
+            requestAnimationFrame(animateConfetti);
+        }
+
+        animateConfetti();
+        
+        // --- Logic gán màu ngẫu nhiên cho dây cờ (Không thay đổi) ---
+        const BUNTING_COLORS = ['#EF9A9A', '#B39DDB', '#80CBC4', '#FFECB3', '#9FA8DA', '#F48FB1', '#A5D6A7', '#FFD180', '#E6EE9C', '#CFD8DC'];
+
+        function assignRandomBuntingColors() {
+            const allBuntings = document.querySelectorAll('.bunting');
+            allBuntings.forEach(bunting => {
+                const randomColor = BUNTING_COLORS[Math.floor(Math.random() * BUNTING_COLORS.length)];
+                bunting.style.setProperty('--bunting-color', randomColor); 
+            });
+        }
+
+        assignRandomBuntingColors();
+
+        // --- HÀM HIỆU ỨNG GÕ CHỮ TỪNG DÒNG (Không thay đổi) ---
+        function typeMessage(elements, elementIndex = 0, charIndex = 0) {
+            if (elementIndex >= elements.length) {
+                elements[elements.length - 1].classList.add('typed-done'); 
+                return;
+            }
+
+            const currentElement = elements[elementIndex];
+            const fullText = currentElement.getAttribute('data-full-text');
+            
+            if (charIndex < fullText.length) {
+                currentElement.textContent += fullText.charAt(charIndex);
+                charIndex++;
+                setTimeout(() => typeMessage(elements, elementIndex, charIndex), TYPING_SPEED);
+            } else {
+                if (currentElement.classList.contains('message-text') || currentElement.classList.contains('message-text-greeting')) {
+                    currentElement.classList.add('typed-done');
+                }
+                setTimeout(() => typeMessage(elements, elementIndex + 1, 0), TYPING_SPEED * 15);
+            }
+        }
+
+        // --- HÀM KÍCH HOẠT HIỆU ỨNG THIỆP ---
+        function revealMessageWithTyping() {
+            const children = Array.from(hiddenMessageTemplate.children).map(node => node.cloneNode(true));
+            
+            children.forEach(element => {
+                element.setAttribute('data-full-text', element.textContent);
+                element.textContent = '';
+                messageContainer.appendChild(element);
+            });
+            
+            typeMessage(children);
+        }
+
+        // --- Logic Phát nhạc từ 1:40 (100s) ---
+        function playMusicFromStart() {
+            if (birthdayMusic && birthdayMusic.src) {
+                birthdayMusic.currentTime = MUSIC_START_TIME; // Đặt thời gian bắt đầu
+                birthdayMusic.volume = 0.6; // Đặt âm lượng vừa phải (tùy chọn)
+                
+                // Lệnh play() phải nằm trong sự kiện tương tác của người dùng để hoạt động trên các trình duyệt hiện đại
+                birthdayMusic.play().catch(error => {
+                    console.log("Auto-play was prevented. User needs to interact again or check music URL.", error);
+                    // Nếu lỗi (do trình duyệt chặn autoplay), có thể thử chơi lại
+                });
+            } else {
+                 console.log("No music source found or audio element not ready. Check the 'src' attribute.");
+            }
+        }
+
+
+        // --- Real-time Date Check and UI Update ---
+        function updateUI() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            
+            isBirthday = now.getMonth() === BIRTHDAY_MONTH && now.getDate() === BIRTHDAY_DAY; 
+            
+            if (!isMessageExpanded) { 
+                if (isBirthday) {
+                    messageContainer.innerHTML = `
+                        <p class="birthday-message-alert">
+                            This is the date, **Chồng iuuuu** please click me ❤️
+                        </p>
+                    `;
+                } else {
+                    messageContainer.innerHTML = `
+                        <p class="not-birthday-message">
+                            It's not been your birthday yet, 
+                            there's nothing here, you curious little kitty ≽^•༚• ྀི≼
+                        </p>
+                    `;
+                }
+            }
+            
+            // --- Countdown Logic ---
+            let birthday = new Date(currentYear, BIRTHDAY_MONTH, BIRTHDAY_DAY);
+            
+            if (now > birthday) {
+                if (!isBirthday) {
+                    birthday = new Date(currentYear + 1, BIRTHDAY_MONTH, BIRTHDAY_DAY);
+                }
+            }
+
+            const distance = birthday - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            if (countdownElement) {
+                if (distance < 0 || isBirthday) {
+                    countdownElement.innerHTML = "🎉 TODAY IS MY LOVE'S BIRTHDAY 🎉";
+                } else {
+                    countdownElement.innerHTML = `${days} DAY(s) ${hours} HOUR(s) ${minutes} MINUTE(s) ${seconds} SEC(s)`;
+                }
+            }
+        }
+
+        // Update UI every second
+        setInterval(updateUI, 1000);
+        updateUI(); // Initial call
+
+        // Click event to reveal message AND play music
+        document.querySelector('.birthday-message').addEventListener('click', () => {
+            if (isBirthday && !isMessageExpanded) {
+                isMessageExpanded = true; 
+                messageContainer.innerHTML = '';
+                
+                // 1. Phát nhạc từ 1:40
+                playMusicFromStart();
+                
+                // 2. Hiện tin nhắn gõ chữ
+                revealMessageWithTyping();
+            }
+        });
+    });
+</script>
+</body>
+</html>
