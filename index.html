@@ -23,7 +23,6 @@
             box-sizing: border-box;
             position: relative;
             overflow-x: hidden;
-            /* Ngăn cuộn khi modal hiện */
             overflow-y: hidden;
         }
 
@@ -123,9 +122,10 @@
             margin-bottom: 30px;
             padding-bottom: 25px;
             border-bottom: 2px dashed #BBDEFB;
+            position: relative;
+            z-index: 200; 
         }
 
-        /* Tiêu đề chính */
         .main-title {
             font-family: 'Pacifico', cursive;
             font-size: 4em;
@@ -133,6 +133,8 @@
             margin-bottom: 15px;
             text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
             line-height: 1.2;
+            position: relative;
+            z-index: 201; 
         }
 
         .subtitle {
@@ -350,18 +352,34 @@
         
         @media (max-width: 600px) {
             .main-title {
-                font-size: 2.8em; 
+                font-size: 3em; 
                 line-height: 1.1; 
+            }
+            .garland-wrap .layer-1 { top: 0px; left: 0%; width: 100%; }
+            .garland-wrap .layer-2 { top: 30px; left: 0%; width: 100%; }
+            .bunting { margin: 0 2px; }
+            .bunting::before { 
+                border-left: 10px solid transparent;
+                border-right: 10px solid transparent;
+                border-bottom: 20px solid var(--bunting-color, #FFCDD2); 
             }
         }
         
         @media (max-width: 450px) {
             .main-title {
-                font-size: 2.2em; 
+                font-size: 2.5em; 
                 line-height: 1.1;
             }
             .subtitle {
                 font-size: 1.2em;
+            }
+            .garland-wrap .layer-1 { top: -5px; left: 0%; width: 100%; }
+            .garland-wrap .layer-2 { top: 20px; left: 0%; width: 100%; }
+            .bunting { margin: 0 1px; }
+            .bunting::before { 
+                border-left: 8px solid transparent;
+                border-right: 8px solid transparent;
+                border-bottom: 16px solid var(--bunting-color, #FFCDD2); 
             }
         }
     </style>
@@ -478,7 +496,7 @@
             document.body.style.overflowY = 'auto';
 
             setInterval(addConfetti, 1500 / (MAX_CONFETTI / 5));
-            assignRandomBuntingColors();
+            // Đã di chuyển assignRandomBuntingColors() ra ngoài DOMContentLoaded
             animateConfetti();
             
             setInterval(updateUI, 1000);
@@ -669,7 +687,7 @@
             if (isBirthday && !isMessageExpanded) {
                 isMessageExpanded = true; 
                 messageContainer.innerHTML = '';
-
+                
                 playMusicFromStart(); 
                 
                 revealMessageWithTyping();
@@ -677,6 +695,8 @@
         });
         
         resizeCanvas();
+        // CẬP NHẬT LỚN: Gọi hàm gán màu ngẫu nhiên ngay khi DOM tải xong
+        assignRandomBuntingColors();
         
     });
 </script>
