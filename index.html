@@ -23,7 +23,75 @@
             box-sizing: border-box;
             position: relative;
             overflow-x: hidden;
+            /* Ngăn cuộn khi modal hiện */
+            overflow-y: hidden;
         }
+
+        /* --- MODAL STYLES --- */
+        #modalBackdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 9000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #passwordModal {
+            background-color: #FFFFFF;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+            z-index: 9001;
+        }
+
+        #passwordModal h2 {
+            font-family: 'Pacifico', cursive;
+            color: #64B5F6;
+            margin-bottom: 20px;
+        }
+
+        #passwordModal input[type="password"] {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #BBDEFB;
+            border-radius: 8px;
+            font-size: 1em;
+            text-align: center;
+        }
+
+        #passwordModal button {
+            background-color: #90CAF9;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 700;
+            transition: background-color 0.3s;
+        }
+
+        #passwordModal button:hover {
+            background-color: #64B5F6;
+        }
+        
+        #error-message {
+            color: #E91E63;
+            margin-top: 10px;
+            font-weight: 700;
+            display: none;
+        }
+        /* --- END MODAL STYLES --- */
+
 
         /* Canvas for Confetti (Full Screen, Background) */
         #confettiCanvas {
@@ -283,6 +351,16 @@
 </head>
 <body>
     
+    <div id="modalBackdrop">
+        <div id="passwordModal">
+            <h2>Hmmm, password 🤔</h2>
+            <form id="passwordForm">
+                <input type="password" id="passwordInput" placeholder="Our secret password" required>
+                <button type="submit">Open the card!</button>
+            </form>
+            <p id="error-message">ehhhhhhh, wrong</p>
+        </div>
+    </div>
     <audio id="birthdayMusic" loop preload="auto" style="display: none;" src="for_you.mp3" type="audio/mpeg">
     </audio>
 
@@ -301,7 +379,7 @@
         <header>
             <h1 class="main-title">Happy Birthday, 
             <br>   my dear!</br></h1>
-            <p class="subtitle">Always be yourself, You're Always Beloved! ✨</p>
+            <p class="subtitle">✨ Always Be Yourself, You're Always Beloved! ✨</p>
         </header>
 
         <section class="birthday-message">
@@ -314,11 +392,11 @@
                 <p class="message-text">Tuổi mới mang theo nhiều niềm vui mới và hãy nhớ là đang có hàng tá những điều tươi đẹp chờ mày khám phá sắp tới. Công việc thì thuận buồm xuôi gió, xuôi chèo mát mái! Dù lỡ gặp khó khăn gì đi chẳng nữa thì cũng dễ dàng vượt qua.</p>
                 <p class="message-text">Qua “tuổi 17” rồi đó, nhớ giữ gìn sức khỏe cho cẩn thận để còn có sức mà "bẻ gãy" hết mấy cái sừng trâu đang cản đường.</p>
                 <p class="message-text">Bước sang tuổi mới, sắc đẹp của mày phải "vượt mặt" mấy bé Pu của những năm trước, phải luôn là phiên bản đẹp nhứt của mình. Có lỡ buồn gì đó thì cũng phải đẹp tại đẹp nó mới hết buồn lẹ được.</p>
-                <p class="message-text">Sau sức khỏe, sắc đẹp, và công việc, mong mày gặp được một "người ấy" thật hợp tính, một người trân trọng mày, một người chịu đựng được mày, một người chấp nhận mày là mày và quan trọng là cùng mày trở nên tốt hơn mỗi ngày.</p>
+                <p class="message-text">Sau sức khỏe, sắc đẹp, và công việc, mong mày gặp được một "người ấy" thật hợp tính, một người trân trọng mày, một người thương mày hết mức, một người chấp nhận mày là mày và quan trọng là cùng mày trở nên tốt hơn mỗi ngày.</p>
                 <p class="message-text">Dù có sóng gió đến đâu, tao vẫn luôn muốn mày giữ vững sự tự tin vào bản thân, hãy luôn là Uyên mà tao biết.</p>
                 <p class="message-text">Thương mày nhứt!</p>
                 <p class="message-text signature">Deine Frau</p>
-                <p class="message-text signature">You_know_who</p>
+                <p class="message-text signature" style="margin-top: -10px;">You_know_who</p>
             </div>
         </section>
 
@@ -334,10 +412,12 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        const HASHED_PASSWORD = '5923ad2ab9b45965334e66761fba8e7c5f427aeb8619168568ff9bc6dc876a61'; 
+
         // --- Configuration ---
         const BIRTHDAY_MONTH = 10; // nov 11 (0-indexed)
         const BIRTHDAY_DAY = 2; 
-        const TYPING_SPEED = 16; 
+        const TYPING_SPEED = 14; 
         const MUSIC_START_TIME = 105; 
         
         // --- Element references ---
@@ -345,11 +425,53 @@
         const hiddenMessageTemplate = document.getElementById('hiddenMessageTemplate');
         const countdownElement = document.getElementById('countdown');
         const birthdayMusic = document.getElementById('birthdayMusic'); 
-        
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        const passwordForm = document.getElementById('passwordForm');
+        const passwordInput = document.getElementById('passwordInput');
+        const errorMessage = document.getElementById('error-message');
+
         let isBirthday = false;
         let isMessageExpanded = false; 
+        
+        // --- PASSWORD HASHING FUNCTION (SHA-256) ---
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
 
-        // --- Confetti Logic---
+        async function checkPassword(event) {
+            event.preventDefault();
+            const enteredPassword = passwordInput.value;
+            const enteredHash = await sha256(enteredPassword);
+
+            if (enteredHash === HASHED_PASSWORD) {
+                unlockCard();
+            } else {
+                errorMessage.style.display = 'block';
+                passwordInput.value = ''; 
+            }
+        }
+        
+        function unlockCard() {
+            modalBackdrop.style.display = 'none';
+            document.body.style.overflowY = 'auto';
+
+            setInterval(addConfetti, 1500 / (MAX_CONFETTI / 5));
+            assignRandomBuntingColors();
+            animateConfetti();
+            
+            setInterval(updateUI, 1000);
+            updateUI(); 
+            
+        }
+        
+        passwordForm.addEventListener('submit', checkPassword);
+        
+        
+        // --- Confetti Logic ---
         const canvas = document.getElementById('confettiCanvas');
         const ctx = canvas.getContext('2d');
         let confettiPieces = [];
@@ -408,8 +530,6 @@
             }
         }
         
-        setInterval(addConfetti, 1500 / (MAX_CONFETTI / 5));
-
         function animateConfetti() {
             ctx.clearRect(0, 0, canvas.width, canvas.height); 
             
@@ -420,8 +540,6 @@
 
             requestAnimationFrame(animateConfetti);
         }
-
-        animateConfetti();
         
         const BUNTING_COLORS = ['#EF9A9A', '#B39DDB', '#80CBC4', '#FFECB3', '#9FA8DA', '#F48FB1', '#A5D6A7', '#FFD180', '#E6EE9C', '#CFD8DC'];
 
@@ -432,8 +550,6 @@
                 bunting.style.setProperty('--bunting-color', randomColor); 
             });
         }
-
-        assignRandomBuntingColors();
 
         function typeMessage(elements, elementIndex = 0, charIndex = 0) {
             if (elementIndex >= elements.length) {
@@ -532,19 +648,21 @@
             }
         }
 
-        // Update UI every second
-        setInterval(updateUI, 1000);
-        updateUI(); // Initial call
-
-        // Click event to reveal message AND play music
+        // Sửa lỗi: Kích hoạt phát nhạc VÀ hiệu ứng đánh máy khi click (chỉ khi đúng ngày sinh nhật)
         document.querySelector('.birthday-message').addEventListener('click', () => {
             if (isBirthday && !isMessageExpanded) {
                 isMessageExpanded = true; 
                 messageContainer.innerHTML = '';
-                playMusicFromStart();
+                
+                // *** DI CHUYỂN PLAY MUSIC VÀO ĐÂY ***
+                playMusicFromStart(); 
+                
                 revealMessageWithTyping();
             }
         });
+        
+        resizeCanvas();
+        
     });
 </script>
 </body>
