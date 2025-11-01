@@ -344,7 +344,24 @@
                 padding: 30px;
             }
             .main-title {
-                font-size: 3em;
+                font-size: 3em; 
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .main-title {
+                font-size: 2.8em; 
+                line-height: 1.1; 
+            }
+        }
+        
+        @media (max-width: 450px) {
+            .main-title {
+                font-size: 2.2em; 
+                line-height: 1.1;
+            }
+            .subtitle {
+                font-size: 1.2em;
             }
         }
     </style>
@@ -377,8 +394,9 @@
     
     <div class="container">
         <header>
-            <h1 class="main-title">Happy Birthday, 
-            <br>   my dear!</br></h1>
+            <h1 class="main-title">Happy 
+                Birthday, 
+            <br> my dear!</br></h1>
             <p class="subtitle">✨ Always Be Yourself, You're Always Beloved! ✨</p>
         </header>
 
@@ -416,7 +434,7 @@
 
         // --- Configuration ---
         const BIRTHDAY_MONTH = 10; // nov 11 (0-indexed)
-        const BIRTHDAY_DAY = 2; 
+        const BIRTHDAY_DAY = 7; 
         const TYPING_SPEED = 14; 
         const MUSIC_START_TIME = 105; 
         
@@ -572,7 +590,6 @@
             }
         }
 
-        // --- HÀM KÍCH HOẠT HIỆU ỨNG THIỆP ---
         function revealMessageWithTyping() {
             const children = Array.from(hiddenMessageTemplate.children).map(node => node.cloneNode(true));
             
@@ -648,13 +665,11 @@
             }
         }
 
-        // Sửa lỗi: Kích hoạt phát nhạc VÀ hiệu ứng đánh máy khi click (chỉ khi đúng ngày sinh nhật)
         document.querySelector('.birthday-message').addEventListener('click', () => {
             if (isBirthday && !isMessageExpanded) {
                 isMessageExpanded = true; 
                 messageContainer.innerHTML = '';
-                
-                // *** DI CHUYỂN PLAY MUSIC VÀO ĐÂY ***
+
                 playMusicFromStart(); 
                 
                 revealMessageWithTyping();
